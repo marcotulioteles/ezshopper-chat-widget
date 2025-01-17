@@ -5,4 +5,21 @@ import tsConfigPaths from 'vite-tsconfig-paths'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tsConfigPaths()],
+  build: {
+    lib: {
+      entry: './src/main.tsx',
+      name: 'Ezshopper Chat',
+      fileName: 'ezshopper-chat',
+      formats: ['es', 'umd']
+    },
+    rollupOptions: {
+      external: ['react', 'react-dom'],
+      output: {
+        globals: {
+          react: 'React',
+          'react-dom': 'ReactDOM'
+        }
+      }
+    }
+  }
 })
