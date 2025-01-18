@@ -1,4 +1,7 @@
 export const getFormattedLocalTime = () => {
     const [localTime, amPmAbbr] = new Date().toLocaleTimeString().split(' ')
-    return `${localTime.slice(0, 5)} ${amPmAbbr}`
+    const localTimeListElem = localTime.split(':');
+    localTimeListElem.pop()
+    const finalLocalTime = localTimeListElem.join(':')
+    return `${finalLocalTime} ${amPmAbbr}`
 }

@@ -20,8 +20,21 @@ interface ChatMessage {
 
 export const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const messagesContainerRef = useRef<HTMLUListElement | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    {
+      id: crypto.randomUUID(),
+      timestamp: getFormattedLocalTime(),
+      message: "Olá, sou seu assistente da loja e estou aqui para te ajudar",
+      sender: "bot",
+    },
+    {
+      id: crypto.randomUUID(),
+      timestamp: getFormattedLocalTime(),
+      message: "Qual informação você precisa?",
+      sender: "bot",
+    },
+  ]);
+  const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const primaryColor = getCSSVariable("--primary-color");
 
@@ -53,28 +66,6 @@ export const ChatBot = () => {
   };
 
   useEffect(() => {
-    if (messages.length === 1 && messages[0].sender !== "bot") {
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          timestamp: getFormattedLocalTime(),
-          message:
-            "Olá, sou seu assistente da loja e estou aqui para te ajudar",
-          sender: "bot",
-        },
-      ]);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          timestamp: getFormattedLocalTime(),
-          message: "Qual informação você precisa?",
-          sender: "bot",
-        },
-      ]);
-    }
-
     scrollToTheBottomMessages();
   }, [messages]);
 
@@ -99,9 +90,9 @@ export const ChatBot = () => {
             <h1 className={styles.chatTitle}>ShopBuddy</h1>
           </header>
           <div className={styles.messagesWrapper}>
-            <ul ref={messagesContainerRef} className={styles.messagesContent}>
+            <div ref={messagesContainerRef} className={styles.messagesContent}>
               {messages.map((msg, index) => (
-                <li key={msg.id} className={styles.messageWrapper}>
+                <div key={msg.id} className={styles.messageWrapper}>
                   <figure
                     className={styles.messageAvatar}
                     style={{
@@ -139,7 +130,7 @@ export const ChatBot = () => {
                       />
                     )}
                   </figure>
-                  <blockquote
+                  <div
                     className={styles.messageText}
                     style={{
                       marginLeft: msg.sender === "customer" ? "48px" : 0,
@@ -153,7 +144,7 @@ export const ChatBot = () => {
                     }}
                   >
                     {msg.message}
-                  </blockquote>
+                  </div>
                   <time
                     className={styles.messageTimestamp}
                     style={{
@@ -171,9 +162,9 @@ export const ChatBot = () => {
                   >
                     {msg.timestamp}
                   </time>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
             <div style={{ position: "relative" }}>
               <input
                 type="text"
