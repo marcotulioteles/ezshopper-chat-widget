@@ -3,7 +3,7 @@
   "private": false,
   "main": "dist/ezshopper-chat.umd.js",
   "module": "dist/ezshopper-chat.es.js",
-  "version": "1.0.9",
+  "version": "1.0.12",
   "author": {
     "email": "marcotuliod3v@gmail.com",
     "name": "Marco Tulio Teles dos Reis"

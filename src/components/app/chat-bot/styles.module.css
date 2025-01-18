@@ -82,10 +82,10 @@
 }
 
 .messageText {
-  font-size: 12px;
-  line-height: 1.67;
-  padding: 8px 12px;
-  border-radius: 8px;
+  font-size: 12px !important;
+  line-height: 1.67 !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
     0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
   text-align: left;
@@ -102,15 +102,10 @@
 .messageInput {
   display: block;
   width: 100%;
-  border-radius: 6px;
-  background-color: #ffffff;
-  padding-left: 12px;
-  padding-right: 32px;
-  padding-top: 6px;
-  padding-bottom: 6px;
-  font-size: normal;
-  line-height: 1.25;
-  color: #111827;
+  padding-left: 12px !important;
+  padding-right: 32px !important;
+  padding-top: 6px !important;
+  padding-bottom: 6px !important;
 }
 
 .messageInput::placeholder {
