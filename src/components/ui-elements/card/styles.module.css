@@ -1,0 +1,23 @@
+.cardContainer {
+  overflow: hidden;
+  border-radius: 16px;
+  background-color: white;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border: 1px solid #e5e7eb;
+}
+
+.cardContentWrapper {
+  padding: 24px;
+}
+
+@media (max-width: 420px) {
+  .cardContainer {
+    max-width: calc(100dvw - 40px) !important;
+  }
+}
+
+@media (min-width: 641px) {
+  .cardContentWrapper {
+    padding: 20px 16px;
+  }
+}

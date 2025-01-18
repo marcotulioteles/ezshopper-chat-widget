@@ -1,19 +1,20 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tsConfigPaths from 'vite-tsconfig-paths'
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
-// https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tsConfigPaths()],
+  plugins: [react(), tsConfigPaths(), cssInjectedByJsPlugin()],
   build: {
     lib: {
       entry: './src/main.tsx',
       name: 'Ezshopper Chat',
-      fileName: 'ezshopper-chat',
+      fileName: (format) => {
+        return format === 'es' ? 'ezshopper-chat.es.js' : 'ezshopper-chat.umd.js'
+      },
       formats: ['es', 'umd']
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
       output: {
         globals: {
           react: 'React',
@@ -21,5 +22,8 @@ export default defineConfig({
         }
       }
     }
+  },
+  define: {
+    'process.env': {}
   }
 })

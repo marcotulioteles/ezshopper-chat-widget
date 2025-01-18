@@ -1,20 +1,15 @@
-import { classNamesSpreader } from "@/utils/classname-spreader";
-import { ReactNode } from "react";
+import { CSSProperties, ReactNode } from "react";
+import styles from "./styles.module.css";
 
 interface CardProps {
   children: ReactNode;
-  additionalClassName?: string;
+  additionalStyles?: CSSProperties;
 }
 
-export function Card({ children, additionalClassName }: CardProps) {
+export function Card({ children, additionalStyles }: CardProps) {
   return (
-    <div
-      className={classNamesSpreader(
-        "overflow-hidden rounded-lg bg-white shadow-xl border border-gray-200",
-        additionalClassName as string
-      )}
-    >
-      <div className="px-4 py-5 sm:p-6">{children}</div>
+    <div className={styles.cardContainer} style={{ ...additionalStyles }}>
+      <div className={styles.cardContentWrapper}>{children}</div>
     </div>
   );
 }
