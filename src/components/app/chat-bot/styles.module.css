@@ -120,6 +120,8 @@
 }
 
 .sendMessageButton {
+  width: 24px;
+  height: 24px;
   position: absolute;
   right: 8px;
   top: 50%;
@@ -143,4 +145,31 @@
 
 .ezShopperLink:hover {
   color: var(--primary-color);
+}
+
+.messageError {
+  font-size: 12px !important;
+  letter-spacing: normal !important;
+  line-height: 1.2 !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background-color: var(--red-100);
+  border: 1px solid var(--red-600);
+  padding: 8px !important;
+  color: var(--red-900);
+  text-align: left !important;
+  border-radius: 8px !important;
+}
+
+.messageErrorContent {
+  max-width: 75%;
+  display: flex;
+  align-items: start;
+  gap: 8px;
+}
+
+.messageErrorBtn {
+  cursor: pointer;
 }

@@ -7,6 +7,8 @@ import {
   PaperPlaneRight,
   User,
   Handbag,
+  WarningCircle,
+  ArrowClockwise,
 } from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import { getCSSVariable } from "@/utils/get-css-variable";
@@ -15,6 +17,7 @@ import { useChatConfig } from "@/hooks/useChatConfig";
 import { ChatMessage } from "@/types/chat-messages.model";
 import { BotTypingLoader } from "@/components/ui-elements/bot-typing-loader";
 import ReactMarkdown from "react-markdown";
+import { useLocalStorage } from "@/hooks/useLocalStorage";
 
 interface UIChatMessage {
   id: string;
@@ -23,10 +26,22 @@ interface UIChatMessage {
   message: string;
 }
 
+const LOCALSTORAGE_THREAD_ID_KEY = "@ezshopper-chat:threadId";
+const LOCALSTORAGE_THREAD_ID_EXPIRATION_KEY =
+  "@ezshopper-chat:threadIdExpiration";
+const THREAD_ID_EXPIRATION_IN_MINUTES = 15;
+
 export const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<UIChatMessage[]>([]);
-  const { isLoading, data, sendMessage } = useSendMessage();
+  const [threadData, setThreadData] = useLocalStorage<{
+    threadId: string;
+    latestCustomerMsg: string;
+  }>(LOCALSTORAGE_THREAD_ID_KEY, {
+    threadId: "",
+    latestCustomerMsg: "",
+  });
+  const { isLoading, data, error, sendMessage } = useSendMessage();
   const { webhookUrl } = useChatConfig();
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -41,7 +56,25 @@ export const ChatBot = () => {
     }
   };
 
+  const setExpiration = () => {
+    localStorage.setItem(
+      LOCALSTORAGE_THREAD_ID_EXPIRATION_KEY,
+      JSON.stringify({
+        value: Date.now() + THREAD_ID_EXPIRATION_IN_MINUTES * 60 * 1000,
+      })
+    );
+  };
+
   const sendMessageAction = () => {
+    const expiration = JSON.parse(
+      localStorage.getItem(LOCALSTORAGE_THREAD_ID_EXPIRATION_KEY) ||
+        JSON.stringify({ value: null })
+    );
+
+    if (!expiration.value) {
+      setExpiration();
+    }
+
     if (inputRef.current?.value) {
       const value = inputRef.current?.value.trim() as string;
 
@@ -49,11 +82,28 @@ export const ChatBot = () => {
 
       const params = {
         message: value,
-        threadId: data.threadId,
+        threadId: expiration.value <= Date.now() ? "" : data.threadId,
       };
+
+      if (expiration.value <= Date.now()) {
+        setExpiration();
+      }
+
+      setThreadData({ ...threadData, latestCustomerMsg: value });
       sendMessage(webhookUrl, params);
     }
   };
+
+  useEffect(() => {
+    if (threadData.threadId !== "") {
+      const params = {
+        message: threadData.latestCustomerMsg,
+        threadId: threadData.threadId,
+      };
+      sendMessage(webhookUrl, params);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const msgs = (JSON.parse(data.result || "[]") as ChatMessage[]).map(
@@ -66,6 +116,11 @@ export const ChatBot = () => {
         } as UIChatMessage)
     );
     setMessages(msgs);
+    setThreadData({
+      ...threadData,
+      threadId: data.threadId,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
@@ -172,6 +227,32 @@ export const ChatBot = () => {
                 </div>
               ))}
               {isLoading && <BotTypingLoader />}
+              {error && (
+                <div className={styles.messageError}>
+                  <div className={styles.messageErrorContent}>
+                    <WarningCircle
+                      color={getCSSVariable("--red-900")}
+                      size={20}
+                    />
+                    <span>Unable to communicate with the assistant now.</span>
+                  </div>
+                  <button
+                    onClick={() => {
+                      const params = {
+                        message: threadData.latestCustomerMsg,
+                        threadId: threadData.threadId,
+                      };
+                      sendMessage(webhookUrl, params);
+                    }}
+                    className={styles.messageErrorBtn}
+                  >
+                    <ArrowClockwise
+                      color={getCSSVariable("--red-900")}
+                      size={16}
+                    />
+                  </button>
+                </div>
+              )}
             </div>
             <div style={{ position: "relative" }}>
               <input
@@ -180,12 +261,13 @@ export const ChatBot = () => {
                 onKeyDown={(e) => e.key === "Enter" && sendMessageAction()}
                 className={styles.messageInput}
                 placeholder="Type a message..."
-                disabled={isLoading}
+                disabled={Boolean(isLoading || error)}
               />
               <button
                 type="button"
                 className={styles.sendMessageButton}
                 onClick={() => sendMessageAction()}
+                disabled={Boolean(isLoading || error)}
               >
                 <PaperPlaneRight color={primaryColor} size={24} />
               </button>
