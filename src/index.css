@@ -44,6 +44,7 @@ h3,
 h4,
 h5,
 h6 {
+  font-size: 16px !important;
   font-family: "Merriweather Sans", sans-serif !important;
   letter-spacing: normal !important;
   font-weight: bold;

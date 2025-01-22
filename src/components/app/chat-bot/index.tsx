@@ -3,12 +3,11 @@ import { Card } from "@/components/ui-elements/card";
 import { getFormattedLocalTime } from "@/utils/get-localtime-formatted";
 import {
   Chats,
-  Storefront,
   PaperPlaneRight,
-  User,
   Handbag,
   WarningCircle,
   ArrowClockwise,
+  X,
 } from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import { getCSSVariable } from "@/utils/get-css-variable";
@@ -161,46 +160,49 @@ export const ChatBot = () => {
           }}
         >
           <header className={styles.chatHeader}>
-            <Storefront color="#fff" size={28} />
+            <Handbag color="#fff" size={28} />
             <h1 className={styles.chatTitle}>ShopBuddy</h1>
+            <button
+              style={{ marginLeft: "auto" }}
+              onClick={() => setIsOpen(false)}
+            >
+              <X color="#ffffff" size={18} />
+            </button>
           </header>
           <div className={styles.messagesWrapper}>
             <div ref={messagesContainerRef} className={styles.messagesContent}>
               {messages.map((msg, index) => (
-                <div key={msg.id} className={styles.messageWrapper}>
+                <div
+                  key={msg.id}
+                  className={styles.messageWrapper}
+                  style={{
+                    marginRight: 0,
+                    marginLeft: "auto",
+                  }}
+                >
                   <figure
                     className={styles.messageAvatar}
                     style={{
-                      left: msg.sender === "customer" ? "4px" : "",
-                      right: msg.sender === "bot" ? "4px" : "",
+                      right: msg.sender === "customer" ? "4px" : "",
+                      left: msg.sender === "bot" ? "4px" : "",
                       display:
-                        (messages[index + 1] &&
+                        (msg.sender === "bot" &&
+                          messages[index + 1] &&
                           msg.sender !== messages[index + 1].sender) ||
                         index === messages.length - 1
                           ? "block"
                           : "none",
                     }}
                   >
-                    {msg.sender === "customer" ? (
-                      <User
-                        color="#6b7280"
-                        size={20}
-                        style={{
-                          position: "absolute",
-                          right: 0,
-                          bottom: 0,
-                          transform: "translate(-50%, -50%)",
-                        }}
-                      />
-                    ) : (
+                    {msg.sender === "customer" ? null : (
                       <Handbag
-                        color={primaryColor}
+                        color="#ffffff"
                         size={20}
                         style={{
                           position: "absolute",
-                          right: 0,
+                          left: 0,
                           bottom: 0,
-                          transform: "translate(-50%, -50%)",
+                          transform: "translate(50%, -50%)",
                         }}
                       />
                     )}
@@ -208,13 +210,12 @@ export const ChatBot = () => {
                   <div
                     className={styles.messageText}
                     style={{
-                      marginLeft: msg.sender === "customer" ? "48px" : 0,
-                      marginRight: msg.sender === "customer" ? 0 : "48px",
                       backgroundColor:
                         msg.sender === "customer"
-                          ? "#f3f4f6"
-                          : "var(--primary-color)",
-                      color: msg.sender === "customer" ? "#111827" : "#ffffff",
+                          ? "var(--primary-color)"
+                          : "#f3f4f6",
+                      marginLeft: msg.sender === "bot" ? "48px" : "auto",
+                      color: msg.sender === "customer" ? "#ffffff" : "#111827",
                       fontWeight: msg.sender === "customer" ? "normal" : 600,
                     }}
                   >
@@ -233,8 +234,6 @@ export const ChatBot = () => {
                         index === messages.length - 1
                           ? "block"
                           : "none",
-                      marginLeft: msg.sender === "customer" ? "48px" : 0,
-                      marginRight: msg.sender === "customer" ? 0 : "48px",
                       justifySelf:
                         msg.sender === "customer" ? "flex-start" : "flex-end",
                     }}

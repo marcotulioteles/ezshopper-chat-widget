@@ -31,7 +31,8 @@
 }
 
 .chatTitle {
-  font-size: 20px;
+  font-weight: 300 !important;
+  font-size: 14px !important;
   line-height: 1.4;
   color: white;
 }
@@ -46,6 +47,7 @@
   min-height: 240px !important;
   max-height: 384px;
   display: grid;
+  grid-template-rows: max-content;
   gap: 4px;
   align-items: flex-start;
   overflow-y: auto;
@@ -75,14 +77,14 @@
   bottom: 40px;
   box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1),
     0 8px 10px -6px rgb(0 0 0 / 0.1) !important;
-  background-color: #f9fafb;
+  background-color: var(--primary-color);
   border-radius: 50%;
   width: 40px;
   height: 40px;
 }
 
 .messageText {
-  font-size: 12px !important;
+  font-size: 14px !important;
   line-height: 1.67 !important;
   padding: 8px 12px !important;
   border-radius: 8px !important;
@@ -94,7 +96,7 @@
 
 .messageTimestamp {
   display: flex;
-  font-size: 10px;
+  font-size: 12px;
   color: #6b7280;
   padding: 12px 0 20px;
 }
@@ -133,14 +135,15 @@
 }
 
 .chatFooter {
-  text-align: left;
-  padding-top: 8px;
+  text-align: center;
+  padding-top: 24px;
   font-size: 10px;
   color: #6b7280;
 }
 
 .ezShopperLink {
   font-weight: bold;
+  font-size: 12px;
 }
 
 .ezShopperLink:hover {
