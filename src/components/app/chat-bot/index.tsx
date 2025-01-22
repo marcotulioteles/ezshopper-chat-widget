@@ -10,8 +10,13 @@ import {
 } from "@phosphor-icons/react";
 import styles from "./styles.module.css";
 import { getCSSVariable } from "@/utils/get-css-variable";
+import { useSendMessage } from "@/hooks/useSendMessage";
+import { useChatConfig } from "@/hooks/useChatConfig";
+import { ChatMessage } from "@/types/chat-messages.model";
+import { BotTypingLoader } from "@/components/ui-elements/bot-typing-loader";
+import ReactMarkdown from "react-markdown";
 
-interface ChatMessage {
+interface UIChatMessage {
   id: string;
   timestamp: string;
   sender: "customer" | "bot";
@@ -20,41 +25,12 @@ interface ChatMessage {
 
 export const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      id: crypto.randomUUID(),
-      timestamp: getFormattedLocalTime(),
-      message: "Olá, sou seu assistente da loja e estou aqui para te ajudar",
-      sender: "bot",
-    },
-    {
-      id: crypto.randomUUID(),
-      timestamp: getFormattedLocalTime(),
-      message: "Qual informação você precisa?",
-      sender: "bot",
-    },
-  ]);
+  const [messages, setMessages] = useState<UIChatMessage[]>([]);
+  const { isLoading, data, sendMessage } = useSendMessage();
+  const { webhookUrl } = useChatConfig();
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const primaryColor = getCSSVariable("--primary-color");
-
-  const sendMessage = () => {
-    if (inputRef.current?.value) {
-      const value = inputRef.current?.value.trim() as string;
-
-      (inputRef.current as HTMLInputElement).value = "";
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: crypto.randomUUID(),
-          timestamp: getFormattedLocalTime(),
-          message: value,
-          sender: "customer",
-        },
-      ]);
-    }
-  };
 
   const scrollToTheBottomMessages = () => {
     if (messagesContainerRef.current) {
@@ -65,9 +41,36 @@ export const ChatBot = () => {
     }
   };
 
+  const sendMessageAction = () => {
+    if (inputRef.current?.value) {
+      const value = inputRef.current?.value.trim() as string;
+
+      (inputRef.current as HTMLInputElement).value = "";
+
+      const params = {
+        message: value,
+        threadId: data.threadId,
+      };
+      sendMessage(webhookUrl, params);
+    }
+  };
+
+  useEffect(() => {
+    const msgs = (JSON.parse(data.result || "[]") as ChatMessage[]).map(
+      (item) =>
+        ({
+          id: crypto.randomUUID(),
+          timestamp: getFormattedLocalTime(),
+          message: item.Content[0].Text,
+          sender: item.Role === "ASSISTANT" ? "bot" : "customer",
+        } as UIChatMessage)
+    );
+    setMessages(msgs);
+  }, [data]);
+
   useEffect(() => {
     scrollToTheBottomMessages();
-  }, [messages]);
+  }, [messages, isLoading]);
 
   return (
     <div>
@@ -143,7 +146,11 @@ export const ChatBot = () => {
                       fontWeight: msg.sender === "customer" ? "normal" : 600,
                     }}
                   >
-                    {msg.message}
+                    {msg.sender === "bot" ? (
+                      <ReactMarkdown>{msg.message}</ReactMarkdown>
+                    ) : (
+                      <span>{msg.message}</span>
+                    )}
                   </div>
                   <time
                     className={styles.messageTimestamp}
@@ -164,19 +171,21 @@ export const ChatBot = () => {
                   </time>
                 </div>
               ))}
+              {isLoading && <BotTypingLoader />}
             </div>
             <div style={{ position: "relative" }}>
               <input
                 type="text"
                 ref={inputRef}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+                onKeyDown={(e) => e.key === "Enter" && sendMessageAction()}
                 className={styles.messageInput}
                 placeholder="Type a message..."
+                disabled={isLoading}
               />
               <button
                 type="button"
                 className={styles.sendMessageButton}
-                onClick={() => sendMessage()}
+                onClick={() => sendMessageAction()}
               >
                 <PaperPlaneRight color={primaryColor} size={24} />
               </button>

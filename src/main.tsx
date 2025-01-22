@@ -3,10 +3,19 @@
 // import { createRoot } from "react-dom/client";
 // import "./index.css";
 // import App from "./App.tsx";
+// import { ChatConfigProvider } from "./contexts/chat-config.context.tsx";
 
 // createRoot(document.getElementById("root")!).render(
 //   <StrictMode>
-//     <App />
+//     <ChatConfigProvider
+//       value={{
+//         shopId: "",
+//         webhookUrl:
+//           "https://ezshopper-shopify-webapi.azurewebsites.net/api/chatbot-realtime/SendMessage",
+//       }}
+//     >
+//       <App />
+//     </ChatConfigProvider>
 //   </StrictMode>
 // );
 
@@ -17,6 +26,7 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { initializeCSSVariables } from "./utils/initialize-css-variables.ts";
+import { ChatConfigProvider } from "./contexts/chat-config.context.tsx";
 
 /**
  * Initializes the chatbot and attaches it to a specified DOM element.
@@ -25,6 +35,9 @@ import { initializeCSSVariables } from "./utils/initialize-css-variables.ts";
  * createChat({ target: '#chat-content' });
  */
 export const createChat = (config: {
+  shopId: string;
+  webhookUrl: string;
+  customerId?: string;
   target: string;
   primaryColor?: string;
 }) => {
@@ -42,7 +55,9 @@ export const createChat = (config: {
   const root = createRoot(targetElement);
   root.render(
     <StrictMode>
-      <App />
+      <ChatConfigProvider value={{ ...config }}>
+        <App />
+      </ChatConfigProvider>
     </StrictMode>
   );
 };
