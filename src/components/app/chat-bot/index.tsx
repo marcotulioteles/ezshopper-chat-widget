@@ -95,7 +95,7 @@ export const ChatBot = () => {
   };
 
   useEffect(() => {
-    if (threadData.threadId !== "") {
+    if (threadData.threadId !== "" && messages.length > 0) {
       const params = {
         message: threadData.latestCustomerMsg,
         threadId: threadData.threadId,
@@ -106,20 +106,37 @@ export const ChatBot = () => {
   }, []);
 
   useEffect(() => {
-    const msgs = (JSON.parse(data.result || "[]") as ChatMessage[]).map(
-      (item) =>
-        ({
+    if (messages.length === 0) {
+      setMessages([
+        {
           id: crypto.randomUUID(),
+          message: "Hi, how are you doing?",
+          sender: "bot",
           timestamp: getFormattedLocalTime(),
-          message: item.Content[0].Text,
-          sender: item.Role === "ASSISTANT" ? "bot" : "customer",
-        } as UIChatMessage)
-    );
-    setMessages(msgs);
-    setThreadData({
-      ...threadData,
-      threadId: data.threadId,
-    });
+        },
+        {
+          id: crypto.randomUUID(),
+          message: "I am your store assistant, how can I help you?",
+          sender: "bot",
+          timestamp: getFormattedLocalTime(),
+        },
+      ]);
+    } else {
+      const msgs = (JSON.parse(data.result || "[]") as ChatMessage[]).map(
+        (item) =>
+          ({
+            id: crypto.randomUUID(),
+            timestamp: getFormattedLocalTime(),
+            message: item.Content[0].Text,
+            sender: item.Role === "ASSISTANT" ? "bot" : "customer",
+          } as UIChatMessage)
+      );
+      setMessages(msgs);
+      setThreadData({
+        ...threadData,
+        threadId: data.threadId,
+      });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
