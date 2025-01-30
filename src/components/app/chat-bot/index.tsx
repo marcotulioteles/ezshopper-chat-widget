@@ -17,6 +17,7 @@ import { ChatMessage } from "@/types/chat-messages.model";
 import { BotTypingLoader } from "@/components/ui-elements/bot-typing-loader";
 import ReactMarkdown from "react-markdown";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
+import { getBase64FileFormat } from "@/utils/get-base64-file-format";
 
 interface UIChatMessage {
   id: string;
@@ -41,10 +42,11 @@ export const ChatBot = () => {
     latestCustomerMsg: "",
   });
   const { isLoading, data, error, sendMessage } = useSendMessage();
-  const { webhookUrl } = useChatConfig();
+  const {
+    config: { webhookUrl, primaryColor, title, chatbotImg, greetingMsg },
+  } = useChatConfig();
   const messagesContainerRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const primaryColor = getCSSVariable("--primary-color");
 
   const scrollToTheBottomMessages = () => {
     if (messagesContainerRef.current) {
@@ -109,13 +111,7 @@ export const ChatBot = () => {
       setMessages([
         {
           id: crypto.randomUUID(),
-          message: "Hi, how are you doing?",
-          sender: "bot",
-          timestamp: getFormattedLocalTime(),
-        },
-        {
-          id: crypto.randomUUID(),
-          message: "I am your store assistant, how can I help you?",
+          message: greetingMsg as string,
           sender: "bot",
           timestamp: getFormattedLocalTime(),
         },
@@ -160,8 +156,24 @@ export const ChatBot = () => {
           }}
         >
           <header className={styles.chatHeader}>
-            <Handbag color="#fff" size={28} />
-            <h1 className={styles.chatTitle}>ShopBuddy</h1>
+            {chatbotImg ? (
+              <img
+                src={`data:image/${getBase64FileFormat(
+                  chatbotImg
+                )};base64, ${chatbotImg}`}
+                alt="shop avatar"
+                style={{
+                  width: "28px",
+                  height: "28px",
+                  borderRadius: "50%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                }}
+              />
+            ) : (
+              <Handbag color="#fff" size={28} />
+            )}
+            <h1 className={styles.chatTitle}>{title || "Shop Assistant"}</h1>
             <button
               style={{ marginLeft: "auto" }}
               onClick={() => setIsOpen(false)}
@@ -194,7 +206,25 @@ export const ChatBot = () => {
                           : "none",
                     }}
                   >
-                    {msg.sender === "customer" ? null : (
+                    {msg.sender === "customer" ? null : chatbotImg ? (
+                      <img
+                        src={`data:image/${getBase64FileFormat(
+                          chatbotImg
+                        )};base64, ${chatbotImg}`}
+                        alt="shop avatar"
+                        style={{
+                          width: "20px",
+                          height: "20px",
+                          borderRadius: "50%",
+                          objectFit: "cover",
+                          objectPosition: "center",
+                          position: "absolute",
+                          left: 0,
+                          bottom: 0,
+                          transform: "translate(50%, -50%)",
+                        }}
+                      />
+                    ) : (
                       <Handbag
                         color="#ffffff"
                         size={20}

@@ -4,7 +4,7 @@ import { ChatBot } from "./components/app/chat-bot";
 
 function App() {
   // ==== Used just for local tests ============================================
-  // const primaryColor = "#010101"; // "#ee2a7b"
+  // const primaryColor = "#e5e5e6"; // "#ee2a7b"
   // initializeCSSVariables(primaryColor);
   // ===========================================================================
 

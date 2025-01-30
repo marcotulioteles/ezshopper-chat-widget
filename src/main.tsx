@@ -8,8 +8,8 @@
 // createRoot(document.getElementById("root")!).render(
 //   <StrictMode>
 //     <ChatConfigProvider
-//       value={{
-//         shopId: "",
+//       initialValues={{
+//         shopId: "73370632441",
 //         webhookUrl:
 //           "https://ezshopper-shopify-webapi.azurewebsites.net/api/chatbot-realtime/SendMessage",
 //       }}
@@ -25,7 +25,6 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
-import { initializeCSSVariables } from "./utils/initialize-css-variables.ts";
 import { ChatConfigProvider } from "./contexts/chat-config.context.tsx";
 
 /**
@@ -41,10 +40,6 @@ export const createChat = (config: {
   customerId?: string;
   primaryColor?: string;
 }) => {
-  // Initialize global CSS variable
-  const primaryColor = config.primaryColor || "#000000"; // Default color
-  initializeCSSVariables(primaryColor);
-
   const targetElement = document.querySelector(config.target);
 
   if (!targetElement) {
@@ -55,7 +50,12 @@ export const createChat = (config: {
   const root = createRoot(targetElement);
   root.render(
     <StrictMode>
-      <ChatConfigProvider value={config}>
+      <ChatConfigProvider
+        initialValues={{
+          shopId: String(config.shopId),
+          webhookUrl: config.webhookUrl,
+        }}
+      >
         <App />
       </ChatConfigProvider>
     </StrictMode>
