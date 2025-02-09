@@ -214,15 +214,15 @@ export const ChatBot = () => {
                         alt="shop avatar"
                         style={{
                           width:
-                            getBase64FileFormat(chatbotImg) === "svg"
+                            getBase64FileFormat(chatbotImg) === "svg+xml"
                               ? "20px"
                               : "100%",
                           height:
-                            getBase64FileFormat(chatbotImg) === "svg"
+                            getBase64FileFormat(chatbotImg) === "svg+xml"
                               ? "20px"
                               : "100%",
                           borderRadius:
-                            getBase64FileFormat(chatbotImg) === "svg"
+                            getBase64FileFormat(chatbotImg) === "svg+xml"
                               ? 0
                               : "50%",
                           objectFit: "cover",
@@ -231,7 +231,7 @@ export const ChatBot = () => {
                           left: 0,
                           bottom: 0,
                           transform:
-                            getBase64FileFormat(chatbotImg) === "svg"
+                            getBase64FileFormat(chatbotImg) === "svg+xml"
                               ? "translate(50%, -50%)"
                               : "",
                         }}

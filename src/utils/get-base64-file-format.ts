@@ -1,7 +1,7 @@
 const imageFileFormats = new Map([
     ["/", "jpg"],
     ["i", "png"],
-    ["P", "svg"],
+    ["P", "svg+xml"],
 ])
 
 export const getBase64FileFormat = (base64Str: string) => {
