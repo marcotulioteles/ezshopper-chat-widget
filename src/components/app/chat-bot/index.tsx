@@ -213,15 +213,27 @@ export const ChatBot = () => {
                         )};base64, ${chatbotImg}`}
                         alt="shop avatar"
                         style={{
-                          width: "20px",
-                          height: "20px",
-                          borderRadius: "50%",
+                          width:
+                            getBase64FileFormat(chatbotImg) === "svg"
+                              ? "20px"
+                              : "100%",
+                          height:
+                            getBase64FileFormat(chatbotImg) === "svg"
+                              ? "20px"
+                              : "100%",
+                          borderRadius:
+                            getBase64FileFormat(chatbotImg) === "svg"
+                              ? 0
+                              : "50%",
                           objectFit: "cover",
                           objectPosition: "center",
                           position: "absolute",
                           left: 0,
                           bottom: 0,
-                          transform: "translate(50%, -50%)",
+                          transform:
+                            getBase64FileFormat(chatbotImg) === "svg"
+                              ? "translate(50%, -50%)"
+                              : "",
                         }}
                       />
                     ) : (
